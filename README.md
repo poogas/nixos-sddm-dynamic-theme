@@ -1,0 +1,1 @@
+# nixos-sddm-dynamic-theme
