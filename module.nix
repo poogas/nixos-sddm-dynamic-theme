@@ -3,7 +3,6 @@
 with lib;
 
 let
-  # Создаем опции для нашего модуля
   cfg = config.services.sddm-dynamic-theme;
 in
 {
@@ -19,6 +18,16 @@ in
       type = types.str;
       default = "/home/${cfg.username}/.config/ax-shell/current.wall";
       description = "Absolute path to the source wallpaper file.";
+    };
+
+    avatar = {
+      enable = mkEnableOption "Enable dynamic user avatar for SDDM";
+
+      sourcePath = mkOption {
+        type = types.str;
+        description = "Absolute path to the user's source avatar image file.";
+        example = literalExpression ''config.home-manager.users."''${cfg.username}''.programs.ax-shell.settings.defaultFaceIcon'';
+      };
     };
   };
 
@@ -37,6 +46,19 @@ in
         InputMethod = "qtvirtualkeyboard";
       };
     };
+
+    systemd.tmpfiles.rules = mkIf cfg.avatar.enable (
+      let
+        processedAvatar = pkgs.runCommand "processed-sddm-avatar" {} ''
+          ${pkgs.imagemagick}/bin/convert '${cfg.avatar.sourcePath}' \
+            -gravity center -crop 1:1 +repage -resize 256x256 \
+            $out
+        '';
+      in
+      [
+        "L+ /var/lib/AccountsService/icons/${cfg.username} - - - - ${processedAvatar}"
+      ]
+    );
 
     systemd.services."update-sddm-wallpaper" = {
       description = "Update SDDM wallpaper";
