@@ -77,7 +77,7 @@ in
       description = "Watch for wallpaper changes to update SDDM";
       wantedBy = [ "multi-user.target" ];
       pathConfig = {
-        PathChanged = cfg.sourceWallpaperPath;
+	PathModified = builtins.dirOf cfg.sourceWallpaperPath;
         MakeDirectory = true;
         Unit = "update-sddm-wallpaper.service";
       };
