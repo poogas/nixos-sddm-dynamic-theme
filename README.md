@@ -41,17 +41,11 @@ In your main `flake.nix`, add this repository to the `inputs` section.
 {
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
-
-    silentSDDM = {
-      url = "github:uiriansan/SilentSDDM";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-    
+  
     # Add this repository
     sddm-dynamic-theme = {
       url = "github:poogas/nixos-sddm-dynamic-theme";
       inputs.nixpkgs.follows = "nixpkgs";
-      inputs.silentSDDM.follows = "silentSDDM";
     };
   };
   
